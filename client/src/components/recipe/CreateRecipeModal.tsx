@@ -113,7 +113,7 @@ export const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({ isOpen, on
         {step === 1 && (
           <div className="space-y-4">
             {/* AI Generator Banner */}
-            <div className="p-4 rounded-xl bg-gradient-to-r from-purple-900/30 to-rose-900/30 border border-purple-500/30 space-y-2">
+            <div className="p-4 rounded-xl bg-linear-to-r from-purple-900/30 to-rose-900/30 border border-purple-500/30 space-y-2">
               <div className="flex items-center space-x-2 text-purple-300 font-semibold text-xs uppercase tracking-wider">
                 <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
                 <span>AI Recipe Co-Pilot</span>
@@ -127,7 +127,7 @@ export const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({ isOpen, on
                   placeholder="e.g. Creamy Truffle Fettuccine with Smoked Garlic..."
                   value={aiPrompt}
                   onChange={(e) => setAiPrompt(e.target.value)}
-                  className="flex-1 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-700 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-purple-400"
+                  className="flex-1 px-3 py-1.5 rounded-lg bg-zinc-900 border border-zinc-700 text-xs text-white focus:outline-none"
                 />
                 <Button
                   type="button"
@@ -157,7 +157,7 @@ export const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({ isOpen, on
                 placeholder="Briefly describe taste profile, aroma, and backstory..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-[--accent-primary]"
+                className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-sm placeholder-zinc-500 focus:outline-none"
               />
             </div>
 
@@ -166,7 +166,7 @@ export const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({ isOpen, on
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-sm text-white focus:outline-none focus:border-[--accent-primary]"
+                className="w-full px-3 py-2 rounded-lg bg-zinc-900 border border-zinc-700 text-sm text-white focus:outline-none"
               >
                 <option value="Main Dish">Main Dish</option>
                 <option value="Vegan">Vegan</option>

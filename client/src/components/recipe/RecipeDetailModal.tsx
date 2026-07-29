@@ -44,7 +44,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, is
             alt={recipe.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[--bg-surface] via-[--bg-surface]/50 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-[--bg-surface] via-[--bg-surface]/50 to-transparent" />
 
           {/* Badges */}
           <div className="absolute top-4 left-4 flex gap-2">
@@ -90,7 +90,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, is
                   <Star className="w-4 h-4 fill-current" />
                   <span className="font-bold text-white text-sm">{recipe.stats.averageRating.toFixed(1)}</span>
                 </div>
-                <div className="h-4 w-[1px] bg-zinc-700" />
+                <div className="h-4 w-px bg-zinc-700" />
                 <button
                   onClick={() => setIsLiked(!isLiked)}
                   className={`flex items-center space-x-1 text-sm font-medium transition-colors ${
@@ -151,7 +151,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, is
             <div className="space-y-4">
               {recipe.steps.map((step) => (
                 <div key={step.stepNumber} className="flex gap-4 p-3 rounded-xl bg-zinc-900/60 border border-zinc-800/60">
-                  <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[--accent-primary-2]/20 text-[--accent-primary-2] font-bold text-xs flex items-center justify-center">
+                  <div className="shrink-0 w-7 h-7 rounded-full bg-[--accent-primary-2]/20 text-[--accent-primary-2] font-bold text-xs flex items-center justify-center">
                     {step.stepNumber}
                   </div>
                   <div className="space-y-2">
@@ -171,7 +171,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, is
 
           {/* Gourmet Order Builder (if Orderable) */}
           {recipe.pricing.isOrderable && (
-            <div className="p-4 rounded-2xl bg-gradient-to-b from-zinc-900 to-zinc-900/90 border border-[--accent-primary]/30 space-y-4">
+            <div className="p-4 rounded-2xl bg-linear-to-b from-zinc-900 to-zinc-900/90 border border-[--accent-primary]/30 space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-bold text-white flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-[--accent-primary]" />
@@ -219,7 +219,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, is
                             <p className="text-xs font-semibold text-white truncate">{addon.name}</p>
                             <p className="text-[10px] text-[--accent-secondary] font-mono">+${addon.price.toFixed(2)}</p>
                           </div>
-                          {isSelected && <Check className="w-4 h-4 text-[--accent-primary] flex-shrink-0" />}
+                          {isSelected && <Check className="w-4 h-4 text-[--accent-primary] shrink-0" />}
                         </button>
                       );
                     })}

@@ -37,7 +37,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, onSelect }) => {
           alt={recipe.title}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[--bg-surface] via-transparent to-black/40" />
+        <div className="absolute inset-0 bg-linear-to-t from-[--bg-surface] via-transparent to-black/40" />
 
         {/* Top Badges & Actions */}
         <div className="absolute top-3 left-3 right-3 flex justify-between items-center z-10">
