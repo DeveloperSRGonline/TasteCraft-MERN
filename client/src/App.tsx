@@ -1,4 +1,11 @@
 import { useState } from 'react';
+import {
+  Show,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  useUser,
+} from '@clerk/react';
 import { Button } from './components/ui/Button';
 import { Chip } from './components/ui/Chip';
 import { Card } from './components/ui/Card';
@@ -8,9 +15,10 @@ import { Input } from './components/ui/Input';
 import { Badge } from './components/ui/Badge';
 import { PillTab } from './components/ui/PillTab';
 import { PortionSelector } from './components/ui/PortionSelector';
-import { Search, Flame, Utensils, ShoppingBag } from 'lucide-react';
+import { Search, Flame, Utensils, ShoppingBag, ShieldCheck, UserCheck } from 'lucide-react';
 
 function App() {
+  const { user } = useUser();
   const [activeCategory, setActiveCategory] = useState('main');
   const [selectedPortion, setSelectedPortion] = useState('medium');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -31,15 +39,66 @@ function App() {
 
   return (
     <div className="min-h-screen bg-bg-primary text-text-heading p-8 flex flex-col items-center justify-start gap-8">
-      {/* Header */}
+      {/* Header with Auth controls */}
       <header className="w-full max-w-4xl flex items-center justify-between border-b border-border-muted pb-4">
-        <h1 className="text-3xl font-bold bg-linear-to-r from-accent-primary to-accent-secondary bg-clip-text text-transparent">
-          TasteCraft — Design System (Phase 0)
-        </h1>
-        <Badge variant="amber">Phase 0 Complete</Badge>
+        <div>
+          <h1 className="text-3xl font-bold bg-linear-to-r from-accent-primary to-accent-secondary bg-clip-text text-transparent">
+            TasteCraft
+          </h1>
+          <p className="text-xs text-text-body mt-1">Phase 1: DB & Auth Sync Verification</p>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <Button variant="outline" size="sm">Sign In</Button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <Button variant="primary" size="sm">Sign Up</Button>
+            </SignUpButton>
+          </Show>
+
+          <Show when="signed-in">
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-text-body font-medium hidden sm:inline">
+                {user?.fullName || user?.primaryEmailAddress?.emailAddress}
+              </span>
+              <UserButton />
+            </div>
+          </Show>
+        </div>
       </header>
 
       <div className="w-full max-w-4xl flex flex-col gap-6">
+        {/* Auth status banner */}
+        <Card className="p-6 border-l-4 border-l-accent-primary flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <ShieldCheck className="w-5 h-5 text-accent-secondary" />
+              <h2 className="text-lg font-bold">Authentication & Mongo Sync Status</h2>
+            </div>
+            {user ? (
+              <p className="text-sm text-text-body">
+                Authenticated as <strong className="text-text-heading">{user?.primaryEmailAddress?.emailAddress}</strong> (Clerk ID: <code className="text-xs bg-bg-primary px-1.5 py-0.5 rounded border border-border-muted">{user?.id}</code>)
+              </p>
+            ) : (
+              <p className="text-sm text-text-body">
+                You are currently browsing as guest. Sign in or Sign up to test user session persistence and MongoDB profile sync.
+              </p>
+            )}
+          </div>
+
+          <div>
+            {user ? (
+              <Badge variant="amber" className="flex items-center gap-1.5 py-1 px-3">
+                <UserCheck className="w-4 h-4" /> User Session Active
+              </Badge>
+            ) : (
+              <Badge variant="primary" className="py-1 px-3">Guest Mode</Badge>
+            )}
+          </div>
+        </Card>
+
         {/* Input & Search Section */}
         <section className="flex flex-col gap-3 bg-bg-surface p-6 rounded-2xl border border-border-muted">
           <h2 className="text-xl font-semibold">1. Input & Search Primitive</h2>

@@ -20,8 +20,8 @@ export const Input: React.FC<InputProps> = ({
         {icon && <span className="absolute left-3.5 text-text-body pointer-events-none">{icon}</span>}
         <input
           className={`w-full bg-bg-primary border ${
-            error ? 'border-accent-primary' : 'border-border-muted focus:border-accent-primary'
-          } rounded-xl py-2.5 ${icon ? 'pl-10' : 'pl-4'} pr-4 text-sm text-text-heading placeholder-text-body/50 outline-none transition-colors duration-200 ${className}`}
+            error ? 'border-accent-primary' : 'border-border-muted'
+          } rounded-xl py-2.5 ${icon ? 'pl-10' : 'pl-4'} pr-4 text-sm text-text-heading outline-none transition-colors duration-200 ${className}`}
           {...props}
         />
       </div>

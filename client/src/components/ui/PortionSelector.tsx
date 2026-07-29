@@ -28,7 +28,7 @@ export const PortionSelector: React.FC<PortionSelectorProps> = ({
             key={option.id}
             type="button"
             onClick={() => onChange(option.id)}
-            className={`flex flex-col items-center justify-center px-4 py-2.5 rounded-xl border transition-all duration-200 cursor-pointer min-w-[90px] ${
+            className={`flex flex-col items-center justify-center px-4 py-2.5 rounded-xl border transition-all duration-200 cursor-pointer min-w-22.5 ${
               isSelected
                 ? 'bg-bg-surface border-2 border-accent-primary text-text-heading shadow-lg shadow-accent-primary/20 scale-105'
                 : 'bg-bg-surface/60 border-border-muted text-text-body hover:border-text-body/60'
