@@ -175,15 +175,15 @@ interface ICart {
 
 ### ✅ Phase 1 — Database Setup & Clerk Auth Hookup
 
-- [ ] Initialize MongoDB Atlas cluster + connect via Mongoose in `server/config/db.ts`
-- [ ] Create `User`, `Recipe`, `Order`, `Cart` models exactly as above
-- [ ] Add compound indexes: `Recipe.author + status`, `Recipe.category`, `User.clerkId` (unique)
-- [ ] Set up Clerk project, get publishable + secret keys
-- [ ] Wrap frontend in `<ClerkProvider>`, protect routes with `<SignedIn>` / `<SignedOut>`
-- [ ] Build Clerk webhook endpoint `POST /api/v1/webhooks/clerk` to sync `user.created` / `user.updated` / `user.deleted` into MongoDB
-- [ ] Verify webhook signatures using Clerk's svix secret
-- [ ] Add a `role` field default (`'user'`) on user creation; manually promote to `'creator'`/`'admin'` for testing
-- [ ] Test full auth loop: sign up → webhook fires → Mongo user doc created → login persists session
+- [x] Initialize MongoDB Atlas cluster + connect via Mongoose in `server/config/db.ts`
+- [x] Create `User`, `Recipe`, `Order`, `Cart` models exactly as above
+- [x] Add compound indexes: `Recipe.author + status`, `Recipe.category`, `User.clerkId` (unique)
+- [x] Set up Clerk project, get publishable + secret keys
+- [x] Wrap frontend in `<ClerkProvider>`, protect routes with `<SignedIn>` / `<SignedOut>`
+- [x] Build Clerk webhook endpoint `POST /api/v1/webhooks/clerk` to sync `user.created` / `user.updated` / `user.deleted` into MongoDB
+- [x] Verify webhook signatures using Clerk's svix secret
+- [x] Add a `role` field default (`'user'`) on user creation; manually promote to `'creator'`/`'admin'` for testing
+- [x] Test full auth loop: sign up → webhook fires → Mongo user doc created → login persists session
 
 ---
 
