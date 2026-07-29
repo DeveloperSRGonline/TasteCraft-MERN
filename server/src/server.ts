@@ -4,6 +4,7 @@ import cors from 'cors';
 import { connectDB } from './config/db';
 import webhookRoutes from './routes/webhookRoutes';
 import userRoutes from './routes/userRoutes';
+import recipeRoutes from './routes/recipeRoutes';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use(express.json({
 // Routes
 app.use('/api/v1/webhooks', webhookRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/recipes', recipeRoutes);
 
 // Health check endpoint
 app.get('/api/v1/health', (_req: Request, res: Response) => {

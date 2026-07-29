@@ -249,8 +249,8 @@ interface ICart {
 
 ### ✅ Phase 5 — Landing Page, Search Polish, Performance
 
-- [ ] Build the Lenis-powered landing page with hero + parallax sections
-- [ ] Build the "Recipe of the Day" scoring query (weighted: likes + rating + order velocity)
+- [x] Build the Lenis-powered landing page with hero + parallax sections
+- [x] Build the "Recipe of the Day" scoring query (weighted: likes + rating + order velocity)
 - [ ] Add skeleton loaders for feed, recipe detail, dashboard graphs
 - [ ] Add image lazy-loading + compression pipeline for recipe/step images
 - [ ] Run a Lighthouse pass — fix any LCP/CLS issues from the glassmorphism header or hero banner
