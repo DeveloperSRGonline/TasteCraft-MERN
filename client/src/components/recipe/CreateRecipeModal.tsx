@@ -33,26 +33,42 @@ export const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({ isOpen, on
     'Melt truffle butter over low heat and gently toss with pasta.',
   ]);
 
-  const handleAiGenerate = () => {
+  const handleAiGenerate = async () => {
     if (!aiPrompt.trim()) return;
     setIsAiLoading(true);
-    setTimeout(() => {
-      setTitle(`Gourmet ${aiPrompt.split(' ')[0] || 'Delicacy'} Creation`);
-      setDescription(`An exquisitely crafted recipe featuring fresh ingredients inspired by "${aiPrompt}". Perfect for dinner parties or personal indulge.`);
-      setCategory('Main Dish');
-      setIngredients([
-        { name: 'Primary Gourmet Ingredient', quantity: '300', unit: 'g' },
-        { name: 'Artisanal Sauce / Seasoning', quantity: '50', unit: 'ml' },
-        { name: 'Fresh Herb Garnish', quantity: '15', unit: 'g' },
-      ]);
-      setInstructions([
-        'Prepare all ingredients fresh and temper at room temperature.',
-        'Sauté ingredients on medium flame to release rich aromas.',
-        'Plate artistically and serve immediately with fresh herbs.',
-      ]);
+    try {
+      const response = await fetch('http://localhost:5000/api/v1/recipes/ai-generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: aiPrompt.trim() }),
+      });
+      const data = await response.json();
+      if (data.success && data.data) {
+        const recipe = data.data;
+        setTitle(recipe.title || '');
+        setDescription(recipe.description || '');
+        setCategory(recipe.category || 'Main Dish');
+        if (recipe.pricing?.price) setPrice(recipe.pricing.price.toString());
+        if (Array.isArray(recipe.ingredients) && recipe.ingredients.length > 0) {
+          setIngredients(
+            recipe.ingredients.map((ing: any) => ({
+              name: ing.name,
+              quantity: String(ing.quantity),
+              unit: ing.unit,
+            }))
+          );
+        }
+        if (Array.isArray(recipe.steps) && recipe.steps.length > 0) {
+          setInstructions(recipe.steps.map((st: any) => st.instruction));
+        }
+      }
+    } catch (err) {
+      console.error('Failed to auto-generate AI recipe:', err);
+    } finally {
       setIsAiLoading(false);
-    }, 1200);
+    }
   };
+
 
   const handleAddIngredient = () => {
     setIngredients([...ingredients, { name: '', quantity: '', unit: 'g' }]);

@@ -217,14 +217,14 @@ interface ICart {
 
 ### ✅ Phase 2 — CRUD Recipe Engine & Zustand Store Setup
 
-- [ ] Build `recipeStore.ts` (Zustand) for UI-only state: active filters, active tab, search input value
-- [ ] Build recipe CRUD API routes (create, read, update, delete, list-by-author)
-- [ ] Build the Create/Edit Recipe form (multi-step: basic info → ingredients → steps → pricing → addons)
-- [ ] Build the Explore Feed page with React Query pagination
-- [ ] Implement the debounced search hook (`useDebounce`, 300ms) and wire it to the search bar
-- [ ] Implement Intersection Observer infinite scroll on the feed
-- [ ] Build the recipe detail page (ingredients, steps, ratings, "Add to Cart" if orderable)
-- [ ] Build save/like/follow toggles with optimistic UI updates
+- [x] Build `recipeStore.ts` (Zustand) for UI-only state: active filters, active tab, search input value
+- [x] Build recipe CRUD API routes (create, read, update, delete, list-by-author)
+- [x] Build the Create/Edit Recipe form (multi-step: basic info → ingredients → steps → pricing → addons)
+- [x] Build the Explore Feed page with React Query pagination
+- [x] Implement the debounced search hook (`useDebounce`, 300ms) and wire it to the search bar
+- [x] Implement Intersection Observer infinite scroll on the feed
+- [x] Build the recipe detail page (ingredients, steps, ratings, "Add to Cart" if orderable)
+- [x] Build save/like/follow toggles with optimistic UI updates
 
 ### ✅ Phase 3 — AI Prompt Pipeline & Custom Meal Builder
 
