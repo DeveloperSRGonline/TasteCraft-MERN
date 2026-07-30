@@ -1,60 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ShoppingBag, Trash2, Plus, Minus, ArrowRight, ShieldCheck } from 'lucide-react';
 import { Drawer } from '../ui/Drawer';
 import { Button } from '../ui/Button';
-
-export interface CartItem {
-  id: string;
-  recipeId: string;
-  title: string;
-  image: string;
-  portionSize: string;
-  selectedAddons: string[];
-  unitPrice: number;
-  quantity: number;
-}
+import { useCartStore } from '../../store/cartStore';
 
 interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
-  items?: CartItem[];
 }
 
-export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items: initialItems = [] }) => {
-  const [items, setItems] = useState<CartItem[]>(
-    initialItems.length > 0
-      ? initialItems
-      : [
-          {
-            id: 'item-1',
-            recipeId: 'rec-1',
-            title: 'Truffle Infused Tagliatelle',
-            image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80',
-            portionSize: 'Large (480g)',
-            selectedAddons: ['Extra Parmesan', 'Truffle Oil Drizzle'],
-            unitPrice: 26.5,
-            quantity: 1,
-          },
-        ]
-  );
+export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
+  const { items, updateQuantity, removeItem, getSubtotal, getDeliveryFee, getTotal } = useCartStore();
 
-  const updateQuantity = (id: string, delta: number) => {
-    setItems((prev) =>
-      prev
-        .map((item) => {
-          if (item.id === id) {
-            const newQty = item.quantity + delta;
-            return newQty > 0 ? { ...item, quantity: newQty } : null;
-          }
-          return item;
-        })
-        .filter((item): item is CartItem => item !== null)
-    );
-  };
-
-  const subtotal = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-  const deliveryFee = subtotal > 0 ? 3.99 : 0;
-  const total = subtotal + deliveryFee;
+  const subtotal = getSubtotal();
+  const deliveryFee = getDeliveryFee();
+  const total = getTotal();
 
   return (
     <Drawer isOpen={isOpen} onClose={onClose} title="Gourmet Order Cart">
@@ -73,14 +33,14 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items: 
                 key={item.id}
                 className="p-3.5 rounded-xl bg-zinc-900/80 border border-zinc-800 flex gap-3 items-center hover:border-zinc-700 transition-all"
               >
-                <img src={item.image} alt={item.title} className="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
+                <img src={item.image} alt={item.title} className="w-16 h-16 rounded-lg object-cover shrink-0" />
 
                 <div className="flex-1 min-w-0">
                   <h4 className="text-sm font-bold text-white truncate">{item.title}</h4>
-                  <p className="text-xs text-[--accent-secondary] font-medium">{item.portionSize}</p>
+                  <p className="text-xs text-[--accent-secondary] font-medium">{item.portionSize.label}</p>
                   {item.selectedAddons.length > 0 && (
                     <p className="text-[11px] text-zinc-400 truncate mt-0.5">
-                      + {item.selectedAddons.join(', ')}
+                      + {item.selectedAddons.map((a) => a.name).join(', ')}
                     </p>
                   )}
                   <p className="text-sm font-semibold text-white mt-1">
@@ -91,7 +51,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items: 
                 {/* Quantity Controls */}
                 <div className="flex flex-col items-end space-y-2">
                   <button
-                    onClick={() => updateQuantity(item.id, -item.quantity)}
+                    onClick={() => removeItem(item.id)}
                     className="text-zinc-500 hover:text-red-400 transition-colors p-1"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -153,3 +113,4 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose, items: 
     </Drawer>
   );
 };
+

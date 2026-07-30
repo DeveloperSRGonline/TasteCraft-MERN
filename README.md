@@ -228,13 +228,13 @@ interface ICart {
 
 ### ✅ Phase 3 — AI Prompt Pipeline & Custom Meal Builder
 
-- [ ] Design the system prompt that forces strict JSON schema output (no prose, no markdown fences)
-- [ ] Build `POST /api/v1/recipes/ai-generate` — calls OpenAI/Gemini, validates JSON shape server-side before returning
-- [ ] Add a JSON schema validator (e.g. Zod) to reject malformed AI output before it reaches the client
-- [ ] Wire AI output into the Create Recipe form as pre-filled (editable) fields
-- [ ] Build the portion-size chip selector + live price recalculation
-- [ ] Build the "Build Your Meal" addon picker (image-preview checkboxes) with live subtotal update
-- [ ] Wire portion + addon selections into the Zustand cart store
+- [x] Design the system prompt that forces strict JSON schema output (no prose, no markdown fences)
+- [x] Build `POST /api/v1/recipes/ai-generate` — calls OpenAI/Gemini, validates JSON shape server-side before returning
+- [x] Add a JSON schema validator (e.g. Zod) to reject malformed AI output before it reaches the client
+- [x] Wire AI output into the Create Recipe form as pre-filled (editable) fields
+- [x] Build the portion-size chip selector + live price recalculation
+- [x] Build the "Build Your Meal" addon picker (image-preview checkboxes) with live subtotal update
+- [x] Wire portion + addon selections into the Zustand cart store
 
 ### ✅ Phase 4 — Razorpay Checkout & Creator Dashboard
 

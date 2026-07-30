@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { PortionSelector } from './RecipePortionSelector';
-import type { Recipe, PortionSize } from '../../types/recipe';
+import type { Recipe, PortionSize, MealAddon } from '../../types/recipe';
 import { Heart, Star, ShoppingBag, UserCheck, UserPlus, Check, Sparkles } from 'lucide-react';
+import { useCartStore } from '../../store/cartStore';
 
 interface RecipeDetailModalProps {
   recipe: Recipe | null;
@@ -14,24 +15,40 @@ interface RecipeDetailModalProps {
 export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, isOpen, onClose }) => {
   if (!recipe) return null;
 
+  const addItemToCart = useCartStore((state) => state.addItem);
+
   const [selectedPortion, setSelectedPortion] = useState<PortionSize>(
     recipe.pricing.portionSizes[0] || { label: 'Standard', priceOffset: 0 }
   );
-  const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+  const [selectedAddonNames, setSelectedAddonNames] = useState<string[]>([]);
   const [isLiked, setIsLiked] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
   const [activeTab, setActiveTab] = useState<'ingredients' | 'steps'>('ingredients');
 
   const basePrice = recipe.pricing.price || 0;
-  const addonTotal = recipe.mealAddons
-    .filter((addon) => selectedAddons.includes(addon.name))
-    .reduce((sum, addon) => sum + addon.price, 0);
+  const selectedAddons: MealAddon[] = recipe.mealAddons.filter((addon) =>
+    selectedAddonNames.includes(addon.name)
+  );
+  const addonTotal = selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
   const totalPrice = basePrice + selectedPortion.priceOffset + addonTotal;
 
   const toggleAddon = (addonName: string) => {
-    setSelectedAddons((prev) =>
+    setSelectedAddonNames((prev) =>
       prev.includes(addonName) ? prev.filter((name) => name !== addonName) : [...prev, addonName]
     );
+  };
+
+  const handleAddToCart = () => {
+    addItemToCart({
+      recipeId: recipe._id,
+      title: recipe.title,
+      image: recipe.steps[0]?.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80',
+      portionSize: selectedPortion,
+      selectedAddons,
+      unitPrice: totalPrice,
+      quantity: 1,
+    });
+    onClose();
   };
 
   return (
@@ -202,7 +219,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, is
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {recipe.mealAddons.map((addon) => {
-                      const isSelected = selectedAddons.includes(addon.name);
+                      const isSelected = selectedAddonNames.includes(addon.name);
                       return (
                         <button
                           key={addon.name}
@@ -233,7 +250,11 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, is
                   <span className="text-xs text-zinc-400 block">Total Meal Price</span>
                   <span className="text-xl font-black text-white">${totalPrice.toFixed(2)}</span>
                 </div>
-                <Button variant="primary" className="px-6 py-2.5 shadow-lg shadow-[--accent-primary]/30 font-bold">
+                <Button
+                  onClick={handleAddToCart}
+                  variant="primary"
+                  className="px-6 py-2.5 shadow-lg shadow-[--accent-primary]/30 font-bold"
+                >
                   <ShoppingBag className="w-4 h-4 mr-2" /> Add to Gourmet Cart
                 </Button>
               </div>
@@ -244,3 +265,4 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({ recipe, is
     </Modal>
   );
 };
+

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRecipeStore } from '../store/recipeStore';
+import { useCartStore } from '../store/cartStore';
 import { useDebounce } from '../hooks/useDebounce';
 import type { Recipe } from '../types/recipe';
 import { RecipeCard } from '../components/recipe/RecipeCard';
@@ -281,9 +282,11 @@ export const Explore: React.FC = () => {
             aria-label="Open Cart"
           >
             <ShoppingBag className="w-4 h-4" />
-            <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[--accent-primary] text-[10px] font-bold text-white flex items-center justify-center">
-              1
-            </span>
+            {useCartStore.getState().items.length > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[--accent-primary] text-[10px] font-bold text-white flex items-center justify-center animate-pulse">
+                {useCartStore((state) => state.items.reduce((sum, item) => sum + item.quantity, 0))}
+              </span>
+            )}
           </button>
 
           {isSignedIn ? (
