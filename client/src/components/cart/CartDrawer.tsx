@@ -1,8 +1,10 @@
-import React from 'react';
-import { ShoppingBag, Trash2, Plus, Minus, ArrowRight, ShieldCheck } from 'lucide-react';
+import React, { useState } from 'react';
+import { ShoppingBag, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Loader2 } from 'lucide-react';
 import { Drawer } from '../ui/Drawer';
 import { Button } from '../ui/Button';
 import { useCartStore } from '../../store/cartStore';
+import { useRazorpay } from '../../hooks/useRazorpay';
+import { useUser } from '@clerk/react';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -10,11 +12,36 @@ interface CartDrawerProps {
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
-  const { items, updateQuantity, removeItem, getSubtotal, getDeliveryFee, getTotal } = useCartStore();
+  const { items, updateQuantity, removeItem, clearCart, getSubtotal, getDeliveryFee, getTotal } = useCartStore();
+  const { processPayment } = useRazorpay();
+  const { user } = useUser();
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const subtotal = getSubtotal();
   const deliveryFee = getDeliveryFee();
   const total = getTotal();
+
+  const handleCheckout = () => {
+    if (items.length === 0) return;
+    setIsProcessing(true);
+
+    processPayment({
+      items,
+      userEmail: user?.primaryEmailAddress?.emailAddress,
+      userName: user?.fullName || user?.username || 'Gourmet Customer',
+      onSuccess: (_order) => {
+        setIsProcessing(false);
+        clearCart();
+        alert('🎉 Payment Successful! Your order has been placed.');
+        onClose();
+      },
+      onError: (err) => {
+        setIsProcessing(false);
+        console.error('Checkout error:', err);
+        alert(`Checkout failed: ${err.message || 'Something went wrong'}`);
+      },
+    });
+  };
 
   return (
     <Drawer isOpen={isOpen} onClose={onClose} title="Gourmet Order Cart">
@@ -97,10 +124,21 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
 
             <Button
               variant="primary"
-              className="w-full py-3 text-sm font-bold shadow-lg shadow-[--accent-primary]/30 flex items-center justify-center space-x-2"
+              disabled={isProcessing}
+              onClick={handleCheckout}
+              className="w-full py-3 text-sm font-bold shadow-lg shadow-[--accent-primary]/30 flex items-center justify-center space-x-2 disabled:opacity-50"
             >
-              <span>Proceed to Razorpay Checkout</span>
-              <ArrowRight className="w-4 h-4" />
+              {isProcessing ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Initiating Razorpay...</span>
+                </>
+              ) : (
+                <>
+                  <span>Proceed to Razorpay Checkout</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </Button>
 
             <div className="flex items-center justify-center space-x-1.5 text-[11px] text-zinc-500 pt-1">
@@ -113,4 +151,3 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
     </Drawer>
   );
 };
-

@@ -22,12 +22,14 @@ app.use(express.json({
 }));
 
 import dashboardRoutes from './routes/dashboardRoutes';
+import orderRoutes from './routes/orderRoutes';
 
 // Routes
 app.use('/api/v1/webhooks', webhookRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/recipes', recipeRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1/orders', orderRoutes);
 
 // Health check endpoint
 app.get('/api/v1/health', (_req: Request, res: Response) => {

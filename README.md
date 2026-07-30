@@ -238,14 +238,14 @@ interface ICart {
 
 ### ✅ Phase 4 — Razorpay Checkout & Creator Dashboard
 
-- [ ] Build `POST /api/v1/orders/create-razorpay-order` (creates Razorpay order, returns order id to client)
-- [ ] Integrate Razorpay Checkout widget on the frontend cart drawer
-- [ ] Build `POST /api/v1/orders/verify-payment` — verify signature server-side, update `Order` status on success
-- [ ] Build Razorpay webhook listener as a backup confirmation path (in case client-side verify is missed)
-- [ ] Build the Creator Dashboard shell: sidebar nav (Overview, Orders, Recipes, Payouts)
-- [ ] Build the Revenue Graph + Top Recipes widgets (recharts)
-- [ ] Build the Order Status Tracker UI with status-update action for creators
-- [ ] Build Content Management table (edit / archive / delete recipes)
+- [x] Build `POST /api/v1/orders/create-razorpay-order` (creates Razorpay order, returns order id to client)
+- [x] Integrate Razorpay Checkout widget on the frontend cart drawer
+- [x] Build `POST /api/v1/orders/verify-payment` — verify signature server-side, update `Order` status on success
+- [x] Build Razorpay webhook listener as a backup confirmation path (in case client-side verify is missed)
+- [x] Build the Creator Dashboard shell: sidebar nav (Overview, Orders, Recipes, Payouts)
+- [x] Build the Revenue Graph + Top Recipes widgets (recharts)
+- [x] Build the Order Status Tracker UI with status-update action for creators
+- [x] Build Content Management table (edit / archive / delete recipes)
 
 ### ✅ Phase 5 — Landing Page, Search Polish, Performance
 
