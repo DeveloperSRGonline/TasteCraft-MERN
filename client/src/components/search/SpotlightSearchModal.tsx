@@ -40,7 +40,7 @@ export const SpotlightSearchModal: React.FC<SpotlightSearchModalProps> = ({
           r.title.toLowerCase().includes(q) ||
           r.description.toLowerCase().includes(q) ||
           r.category.toLowerCase().includes(q) ||
-          r.ingredients.some((ing) => ing.toLowerCase().includes(q))
+          r.ingredients.some((ing) => typeof ing === 'string' && ing.toLowerCase().includes(q))
         );
       });
 

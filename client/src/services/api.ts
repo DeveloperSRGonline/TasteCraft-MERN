@@ -45,7 +45,7 @@ export const fetchRecipeById = async (id: string): Promise<Recipe> => {
   return response.data;
 };
 
-export const createRecipe = async (data: Omit<Recipe, '_id' | 'likesCount' | 'likedBy' | 'createdAt' | 'updatedAt'>): Promise<Recipe> => {
+export const createRecipe = async (data: Omit<Recipe, '_id' | 'likesCount' | 'likedBy' | 'createdAt' | 'updatedAt' | 'userId'>): Promise<Recipe> => {
   const response = await axios.post(
     API_BASE_URL,
     {

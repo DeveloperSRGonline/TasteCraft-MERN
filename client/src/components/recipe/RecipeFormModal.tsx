@@ -49,36 +49,36 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
     setError('');
   };
 
-  const handleAddIngredient = () => {
+  const addIngredient = () => {
     setIngredients([...ingredients, '']);
   };
 
-  const handleRemoveIngredient = (index: number) => {
+  const removeIngredient = (index: number) => {
     if (ingredients.length > 1) {
       setIngredients(ingredients.filter((_, i) => i !== index));
     }
   };
 
-  const handleIngredientChange = (index: number, value: string) => {
-    const newIngredients = [...ingredients];
-    newIngredients[index] = value;
-    setIngredients(newIngredients);
+  const updateIngredient = (index: number, value: string) => {
+    const updated = [...ingredients];
+    updated[index] = value;
+    setIngredients(updated);
   };
 
-  const handleAddStep = () => {
+  const addStep = () => {
     setSteps([...steps, '']);
   };
 
-  const handleRemoveStep = (index: number) => {
+  const removeStep = (index: number) => {
     if (steps.length > 1) {
       setSteps(steps.filter((_, i) => i !== index));
     }
   };
 
-  const handleStepChange = (index: number, value: string) => {
-    const newSteps = [...steps];
-    newSteps[index] = value;
-    setSteps(newSteps);
+  const updateStep = (index: number, value: string) => {
+    const updated = [...steps];
+    updated[index] = value;
+    setSteps(updated);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,84 +86,82 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
     setError('');
 
     if (!title.trim()) {
-      setError('Recipe title is required');
+      setError('Title is required');
       return;
     }
     if (!description.trim()) {
       setError('Description is required');
       return;
     }
-
-    const cleanIngredients = ingredients.map((i) => i.trim()).filter((i) => i !== '');
-    if (cleanIngredients.length === 0) {
+    if (!ingredients.filter(i => i.trim()).length) {
       setError('At least one ingredient is required');
       return;
     }
-
-    const cleanSteps = steps.map((s) => s.trim()).filter((s) => s !== '');
-    if (cleanSteps.length === 0) {
-      setError('At least one preparation step is required');
+    if (!steps.filter(s => s.trim()).length) {
+      setError('At least one step is required');
       return;
     }
 
+    setIsSubmitting(true);
     try {
-      setIsSubmitting(true);
       await onSubmit({
         title: title.trim(),
-        category,
         description: description.trim(),
-        ingredients: cleanIngredients,
-        steps: cleanSteps,
-        userId: editingRecipe?.userId || '',
+        category,
+        ingredients: ingredients.filter(i => i.trim()),
+        steps: steps.filter(s => s.trim()),
+        userId: 'user_1', // This will be handled by the API
+        likesCount: 0,
+        likedBy: [],
       });
       resetForm();
       onClose();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save recipe');
+    } catch (err) {
+      setError('Failed to save recipe. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={editingRecipe ? 'Edit Recipe' : 'Create New Recipe'}
-    >
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5 max-h-[75vh] overflow-y-auto pr-2">
+    <Modal isOpen={isOpen} onClose={onClose} title={editingRecipe ? 'Edit Recipe' : 'Create New Recipe'}>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         {error && (
-          <div className="p-3 bg-accent-primary/10 border border-accent-primary/30 rounded-xl text-xs text-accent-primary font-medium">
+          <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
             {error}
           </div>
         )}
 
         {/* Title */}
-        <Input
-          label="Recipe Title"
-          placeholder="e.g. Creamy Truffle Pasta"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          icon={<Utensils className="w-4 h-4" />}
-          required
-        />
+        <div>
+          <label className="block text-sm font-medium text-text-heading mb-2 flex items-center gap-2">
+            <Utensils className="w-4 h-4 text-accent-secondary" />
+            Recipe Title
+          </label>
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="e.g., Spaghetti Carbonara"
+            required
+          />
+        </div>
 
         {/* Category */}
-        <div className="flex flex-col gap-1.5 w-full">
-          <label className="text-sm font-medium text-text-body flex items-center gap-1.5">
+        <div>
+          <label className="block text-sm font-medium text-text-heading mb-2 flex items-center gap-2">
             <Tag className="w-4 h-4 text-accent-secondary" />
             Category
           </label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((cat) => (
               <button
-                type="button"
                 key={cat}
+                type="button"
                 onClick={() => setCategory(cat)}
-                className={`py-2 px-3 text-xs font-medium rounded-xl border transition-all cursor-pointer text-center ${
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                   category === cat
-                    ? 'bg-accent-primary text-white border-accent-primary shadow-md shadow-accent-primary/20'
-                    : 'bg-bg-primary border-border-muted text-text-body hover:text-text-heading hover:border-text-body/40'
+                    ? 'bg-accent-primary text-white'
+                    : 'bg-bg-primary text-text-body hover:text-text-heading hover:bg-bg-surface'
                 }`}
               >
                 {cat}
@@ -173,116 +171,120 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
         </div>
 
         {/* Description */}
-        <div className="flex flex-col gap-1.5 w-full">
-          <label className="text-sm font-medium text-text-body">Description</label>
+        <div>
+          <label className="block text-sm font-medium text-text-heading mb-2">Description</label>
           <textarea
-            rows={3}
-            className="w-full bg-bg-primary border border-border-muted focus:border-accent-primary rounded-xl p-3 text-sm text-text-heading placeholder-text-body/50 outline-none transition-colors duration-200 resize-none"
-            placeholder="Brief description of your culinary creation..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            placeholder="Describe your recipe..."
+            rows={3}
+            className="w-full px-4 py-3 rounded-xl bg-bg-primary border border-border-muted/60 text-text-heading placeholder:text-text-body/50 focus:outline-none focus:border-accent-primary/50 transition-colors resize-none"
             required
           />
         </div>
 
         {/* Ingredients */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-text-body flex items-center gap-1.5">
-              <ListChecks className="w-4 h-4 text-accent-secondary" />
-              Ingredients
-            </label>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={handleAddIngredient}
-              className="text-xs gap-1 text-accent-secondary hover:text-accent-secondary/80"
-            >
-              <Plus className="w-3.5 h-3.5" /> Add Ingredient
-            </Button>
-          </div>
-
-          <div className="flex flex-col gap-2">
+        <div>
+          <label className="block text-sm font-medium text-text-heading mb-2 flex items-center gap-2">
+            <ListChecks className="w-4 h-4 text-accent-secondary" />
+            Ingredients
+          </label>
+          <div className="space-y-2">
             {ingredients.map((ingredient, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <input
-                  type="text"
-                  placeholder={`Ingredient #${index + 1} (e.g. 200g Fresh Pasta)`}
+              <div key={index} className="flex gap-2">
+                <Input
                   value={ingredient}
-                  onChange={(e) => handleIngredientChange(index, e.target.value)}
-                  className="flex-1 bg-bg-primary border border-border-muted focus:border-accent-primary rounded-xl px-3 py-2 text-xs text-text-heading placeholder-text-body/40 outline-none transition-colors"
+                  onChange={(e) => updateIngredient(index, e.target.value)}
+                  placeholder={`Ingredient ${index + 1}`}
+                  className="flex-1"
                 />
                 {ingredients.length > 1 && (
-                  <button
+                  <Button
                     type="button"
-                    onClick={() => handleRemoveIngredient(index)}
-                    className="p-2 text-text-body hover:text-accent-primary-2 rounded-lg transition-colors cursor-pointer"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeIngredient(index)}
+                    className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
                   >
                     <Trash2 className="w-4 h-4" />
-                  </button>
+                  </Button>
                 )}
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Preparation Steps */}
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium text-text-body flex items-center gap-1.5">
-              <ChefHat className="w-4 h-4 text-accent-primary" />
-              Preparation Steps
-            </label>
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               size="sm"
-              onClick={handleAddStep}
-              className="text-xs gap-1 text-accent-primary hover:text-accent-primary/80"
+              onClick={addIngredient}
+              className="w-full"
             >
-              <Plus className="w-3.5 h-3.5" /> Add Step
+              <Plus className="w-4 h-4 mr-2" /> Add Ingredient
             </Button>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            {steps.map((step, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <span className="text-xs font-bold text-accent-primary w-5 text-center shrink-0">
-                  {index + 1}.
-                </span>
-                <input
-                  type="text"
-                  placeholder={`Step #${index + 1} instruction...`}
-                  value={step}
-                  onChange={(e) => handleStepChange(index, e.target.value)}
-                  className="flex-1 bg-bg-primary border border-border-muted focus:border-accent-primary rounded-xl px-3 py-2 text-xs text-text-heading placeholder-text-body/40 outline-none transition-colors"
-                />
-                {steps.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveStep(index)}
-                    className="p-2 text-text-body hover:text-accent-primary-2 rounded-lg transition-colors cursor-pointer"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                )}
-              </div>
-            ))}
           </div>
         </div>
 
-        {/* Form Footer */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-muted mt-2">
-          <Button type="button" variant="secondary" onClick={onClose} disabled={isSubmitting}>
+        {/* Steps */}
+        <div>
+          <label className="block text-sm font-medium text-text-heading mb-2 flex items-center gap-2">
+            <ChefHat className="w-4 h-4 text-accent-secondary" />
+            Steps
+          </label>
+          <div className="space-y-2">
+            {steps.map((step, index) => (
+              <div key={index} className="flex gap-2">
+                <div className="shrink-0 w-6 h-6 rounded-full bg-accent-primary/20 text-accent-primary text-xs font-bold flex items-center justify-center mt-3">
+                  {index + 1}
+                </div>
+                <textarea
+                  value={step}
+                  onChange={(e) => updateStep(index, e.target.value)}
+                  placeholder={`Step ${index + 1}`}
+                  rows={2}
+                  className="flex-1 px-4 py-3 rounded-xl bg-bg-primary border border-border-muted/60 text-text-heading placeholder:text-text-body/50 focus:outline-none focus:border-accent-primary/50 transition-colors resize-none"
+                />
+                {steps.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeStep(index)}
+                    className="text-red-400 hover:text-red-300 hover:bg-red-500/10 mt-2"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+            ))}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={addStep}
+              className="w-full"
+            >
+              <Plus className="w-4 h-4 mr-2" /> Add Step
+            </Button>
+          </div>
+        </div>
+
+        {/* Submit */}
+        <div className="flex gap-3 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            className="flex-1"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
-          <Button type="submit" variant="primary" disabled={isSubmitting}>
-            {isSubmitting
-              ? 'Saving...'
-              : editingRecipe
-              ? 'Update Recipe'
-              : 'Create Recipe'}
+          <Button
+            type="submit"
+            variant="primary"
+            className="flex-1"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Saving...' : editingRecipe ? 'Update Recipe' : 'Create Recipe'}
           </Button>
         </div>
       </form>
