@@ -133,7 +133,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
 
         {/* Title */}
         <div>
-          <label className="block text-sm font-medium text-text-heading mb-2 flex items-center gap-2">
+          <label className="text-sm font-medium text-text-heading mb-2 flex items-center gap-2">
             <Utensils className="w-4 h-4 text-accent-secondary" />
             Recipe Title
           </label>
@@ -147,7 +147,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
 
         {/* Category */}
         <div>
-          <label className="block text-sm font-medium text-text-heading mb-2 flex items-center gap-2">
+          <label className="text-sm font-medium text-text-heading mb-2 flex items-center gap-2">
             <Tag className="w-4 h-4 text-accent-secondary" />
             Category
           </label>
@@ -184,7 +184,7 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
 
         {/* Ingredients */}
         <div>
-          <label className="block text-sm font-medium text-text-heading mb-2 flex items-center gap-2">
+          <label className="text-sm font-medium text-text-heading mb-2 flex items-center gap-2">
             <ListChecks className="w-4 h-4 text-accent-secondary" />
             Ingredients
           </label>
