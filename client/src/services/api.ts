@@ -1,7 +1,8 @@
 import axios from 'axios';
 import type { Recipe } from '../types/recipe';
 
-const API_BASE_URL = 'http://localhost:5000/api/recipes';
+// Use relative path for Vercel deployment (works both in production and with vercel dev)
+const API_BASE_URL = '/api/recipes';
 
 // Helper to get or set user ID in localStorage
 export const getStoredUserId = (): string => {
