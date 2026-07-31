@@ -88,11 +88,11 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
           <div className="flex items-center gap-3 text-xs text-text-body">
             <span className="flex items-center gap-1">
               <ListChecks className="w-3.5 h-3.5 text-accent-secondary" />
-              {recipe.ingredients.length} ingredients
+              {Array.isArray(recipe.ingredients) ? recipe.ingredients.length : 0} ingredients
             </span>
             <span className="flex items-center gap-1">
               <ChefHat className="w-3.5 h-3.5 text-accent-secondary" />
-              {recipe.steps.length} steps
+              {Array.isArray(recipe.steps) ? recipe.steps.length : 0} steps
             </span>
           </div>
         </div>

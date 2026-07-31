@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { Recipe } from '../../types/recipe';
+import type { Recipe, Ingredient, Step } from '../../types/recipe';
 import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
@@ -8,7 +8,7 @@ import { Plus, Trash2, Utensils, ListChecks, ChefHat, Tag } from 'lucide-react';
 interface RecipeFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: Omit<Recipe, '_id' | 'likesCount' | 'likedBy' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  onSubmit: (data: Omit<Recipe, '_id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   editingRecipe?: Recipe | null;
 }
 
@@ -23,8 +23,8 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('Main Dish');
   const [description, setDescription] = useState('');
-  const [ingredients, setIngredients] = useState<string[]>(['']);
-  const [steps, setSteps] = useState<string[]>(['']);
+  const [ingredients, setIngredients] = useState<Ingredient[]>([{ name: '', quantity: 0, unit: 'g', isOptional: false }]);
+  const [steps, setSteps] = useState<Step[]>([{ stepNumber: 1, instruction: '' }]);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -33,8 +33,8 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
       setTitle(editingRecipe.title || '');
       setCategory(editingRecipe.category || 'Main Dish');
       setDescription(editingRecipe.description || '');
-      setIngredients(editingRecipe.ingredients?.length ? editingRecipe.ingredients : ['']);
-      setSteps(editingRecipe.steps?.length ? editingRecipe.steps : ['']);
+      setIngredients(editingRecipe.ingredients?.length ? editingRecipe.ingredients : [{ name: '', quantity: 0, unit: 'g', isOptional: false }]);
+      setSteps(editingRecipe.steps?.length ? editingRecipe.steps : [{ stepNumber: 1, instruction: '' }]);
     } else {
       resetForm();
     }
@@ -44,13 +44,13 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
     setTitle('');
     setCategory('Main Dish');
     setDescription('');
-    setIngredients(['']);
-    setSteps(['']);
+    setIngredients([{ name: '', quantity: 0, unit: 'g', isOptional: false }]);
+    setSteps([{ stepNumber: 1, instruction: '' }]);
     setError('');
   };
 
   const addIngredient = () => {
-    setIngredients([...ingredients, '']);
+    setIngredients([...ingredients, { name: '', quantity: 0, unit: 'g', isOptional: false }]);
   };
 
   const removeIngredient = (index: number) => {
@@ -59,25 +59,26 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
     }
   };
 
-  const updateIngredient = (index: number, value: string) => {
+  const updateIngredient = (index: number, field: keyof Ingredient, value: string | number | boolean) => {
     const updated = [...ingredients];
-    updated[index] = value;
+    updated[index] = { ...updated[index], [field]: value };
     setIngredients(updated);
   };
 
   const addStep = () => {
-    setSteps([...steps, '']);
+    setSteps([...steps, { stepNumber: steps.length + 1, instruction: '' }]);
   };
 
   const removeStep = (index: number) => {
     if (steps.length > 1) {
-      setSteps(steps.filter((_, i) => i !== index));
+      const updated = steps.filter((_, i) => i !== index).map((step, i) => ({ ...step, stepNumber: i + 1 }));
+      setSteps(updated);
     }
   };
 
   const updateStep = (index: number, value: string) => {
     const updated = [...steps];
-    updated[index] = value;
+    updated[index] = { ...updated[index], instruction: value };
     setSteps(updated);
   };
 
@@ -93,11 +94,11 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
       setError('Description is required');
       return;
     }
-    if (!ingredients.filter(i => i.trim()).length) {
+    if (!ingredients.filter(i => i.name.trim()).length) {
       setError('At least one ingredient is required');
       return;
     }
-    if (!steps.filter(s => s.trim()).length) {
+    if (!steps.filter(s => s.instruction.trim()).length) {
       setError('At least one step is required');
       return;
     }
@@ -108,11 +109,9 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
         title: title.trim(),
         description: description.trim(),
         category,
-        ingredients: ingredients.filter(i => i.trim()),
-        steps: steps.filter(s => s.trim()),
+        ingredients: ingredients.filter(i => i.name.trim()),
+        steps: steps.filter(s => s.instruction.trim()),
         userId: 'user_1', // This will be handled by the API
-        likesCount: 0,
-        likedBy: [],
       });
       resetForm();
       onClose();
@@ -191,12 +190,25 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
           </label>
           <div className="space-y-2">
             {ingredients.map((ingredient, index) => (
-              <div key={index} className="flex gap-2">
+              <div key={index} className="flex gap-2 items-center">
                 <Input
-                  value={ingredient}
-                  onChange={(e) => updateIngredient(index, e.target.value)}
+                  value={ingredient.name}
+                  onChange={(e) => updateIngredient(index, 'name', e.target.value)}
                   placeholder={`Ingredient ${index + 1}`}
                   className="flex-1"
+                />
+                <Input
+                  type="number"
+                  value={ingredient.quantity || ''}
+                  onChange={(e) => updateIngredient(index, 'quantity', parseFloat(e.target.value) || 0)}
+                  placeholder="Qty"
+                  className="w-20"
+                />
+                <Input
+                  value={ingredient.unit}
+                  onChange={(e) => updateIngredient(index, 'unit', e.target.value)}
+                  placeholder="Unit"
+                  className="w-20"
                 />
                 {ingredients.length > 1 && (
                   <Button
@@ -233,12 +245,12 @@ export const RecipeFormModal: React.FC<RecipeFormModalProps> = ({
             {steps.map((step, index) => (
               <div key={index} className="flex gap-2">
                 <div className="shrink-0 w-6 h-6 rounded-full bg-accent-primary/20 text-accent-primary text-xs font-bold flex items-center justify-center mt-3">
-                  {index + 1}
+                  {step.stepNumber}
                 </div>
                 <textarea
-                  value={step}
+                  value={step.instruction}
                   onChange={(e) => updateStep(index, e.target.value)}
-                  placeholder={`Step ${index + 1}`}
+                  placeholder={`Step ${step.stepNumber}`}
                   rows={2}
                   className="flex-1 px-4 py-3 rounded-xl bg-bg-primary border border-border-muted/60 text-text-heading placeholder:text-text-body/50 focus:outline-none focus:border-accent-primary/50 transition-colors resize-none"
                 />

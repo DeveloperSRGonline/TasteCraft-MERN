@@ -94,6 +94,16 @@ export const CreateRecipeModal: React.FC<CreateRecipeModalProps> = ({ isOpen, on
           price: parseFloat(price) || 0,
           portionSizes: [{ label: 'Standard', priceOffset: 0 }],
         },
+        ingredients: ingredients.map(ing => ({
+          name: ing.name,
+          quantity: parseFloat(ing.quantity) || 0,
+          unit: ing.unit,
+          isOptional: false
+        })),
+        steps: instructions.map((inst, i) => ({
+          stepNumber: i + 1,
+          instruction: inst
+        })),
       });
     }
     onClose();

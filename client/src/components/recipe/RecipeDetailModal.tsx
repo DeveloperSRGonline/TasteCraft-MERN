@@ -78,7 +78,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
             }`}
           >
             <ListChecks className="w-4 h-4 inline mr-1" />
-            Ingredients ({recipe.ingredients.length})
+            Ingredients ({Array.isArray(recipe.ingredients) ? recipe.ingredients.length : 0})
             {activeTab === 'ingredients' && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-primary rounded-full" />
             )}
@@ -92,7 +92,7 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
             }`}
           >
             <ChefHat className="w-4 h-4 inline mr-1" />
-            Steps ({recipe.steps.length})
+            Steps ({Array.isArray(recipe.steps) ? recipe.steps.length : 0})
             {activeTab === 'steps' && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent-primary rounded-full" />
             )}
@@ -102,29 +102,38 @@ export const RecipeDetailModal: React.FC<RecipeDetailModalProps> = ({
         {/* Tab Content */}
         {activeTab === 'ingredients' ? (
           <div className="space-y-2">
-            {recipe.ingredients.map((ingredient, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-3 p-3 rounded-lg bg-bg-primary/50 border border-border-muted/30"
-              >
-                <CheckCircle2 className="w-4 h-4 text-accent-secondary shrink-0" />
-                <span className="text-sm text-text-body">{ingredient}</span>
-              </div>
-            ))}
+            {recipe.ingredients.map((ingredient, index) => {
+              const ingredientText = typeof ingredient === 'string' 
+                ? ingredient 
+                : `${ingredient.quantity} ${ingredient.unit} ${ingredient.name}`;
+              return (
+                <div
+                  key={index}
+                  className="flex items-center gap-3 p-3 rounded-lg bg-bg-primary/50 border border-border-muted/30"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-accent-secondary shrink-0" />
+                  <span className="text-sm text-text-body">{ingredientText}</span>
+                </div>
+              );
+            })}
           </div>
         ) : (
           <div className="space-y-3">
-            {recipe.steps.map((step, index) => (
-              <div
-                key={index}
-                className="flex gap-3 p-3 rounded-lg bg-bg-primary/50 border border-border-muted/30"
-              >
-                <div className="shrink-0 w-6 h-6 rounded-full bg-accent-primary/20 text-accent-primary text-xs font-bold flex items-center justify-center">
-                  {index + 1}
+            {recipe.steps.map((step, index) => {
+              const stepText = typeof step === 'string' ? step : step.instruction;
+              const stepNumber = typeof step === 'string' ? index + 1 : step.stepNumber;
+              return (
+                <div
+                  key={index}
+                  className="flex gap-3 p-3 rounded-lg bg-bg-primary/50 border border-border-muted/30"
+                >
+                  <div className="shrink-0 w-6 h-6 rounded-full bg-accent-primary/20 text-accent-primary text-xs font-bold flex items-center justify-center">
+                    {stepNumber}
+                  </div>
+                  <p className="text-sm text-text-body leading-relaxed">{stepText}</p>
                 </div>
-                <p className="text-sm text-text-body leading-relaxed">{step}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 

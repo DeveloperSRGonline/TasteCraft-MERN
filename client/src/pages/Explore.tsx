@@ -165,7 +165,7 @@ export const Explore: React.FC = () => {
   const filteredRecipes = recipes.filter((recipe) => {
     // Tab filtering
     if (activeTab === 'my-recipes') {
-      if (user && recipe.author.username !== user.username) return false;
+      if (user && recipe.author?.username !== user.username) return false;
     }
 
     // Category filtering
@@ -178,7 +178,10 @@ export const Explore: React.FC = () => {
       const q = debouncedSearch.toLowerCase();
       const matchTitle = recipe.title.toLowerCase().includes(q);
       const matchCategory = recipe.category.toLowerCase().includes(q);
-      const matchIngredient = recipe.ingredients.some((ing) => ing.name.toLowerCase().includes(q));
+      const matchIngredient = recipe.ingredients.some((ing) => {
+        const ingName = typeof ing === 'string' ? ing : ing.name;
+        return ingName.toLowerCase().includes(q);
+      });
       return matchTitle || matchCategory || matchIngredient;
     }
 
@@ -223,7 +226,7 @@ export const Explore: React.FC = () => {
       author: {
         _id: user?.id || 'u-current',
         username: user?.username || user?.firstName || 'you',
-        profilePic: user?.imageUrl,
+        profilePic: user?.imageUrl || '',
       },
       stats: { likesCount: 0, ordersCount: 0, averageRating: 5.0 },
       status: 'published',
@@ -353,7 +356,15 @@ export const Explore: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredRecipes.slice(0, visibleCount).map((recipe) => (
-              <RecipeCard key={recipe._id} recipe={recipe} onSelect={handleOpenDetail} />
+              <RecipeCard 
+                key={recipe._id} 
+                recipe={recipe} 
+                currentUserId={user?.id || ''} 
+                onView={handleOpenDetail}
+                onEdit={() => {}}
+                onDelete={() => {}}
+                onToggleLike={() => {}}
+              />
             ))}
           </div>
         )}
@@ -377,7 +388,11 @@ export const Explore: React.FC = () => {
       <RecipeDetailModal
         recipe={selectedRecipe}
         isOpen={isDetailOpen}
+        currentUserId={user?.id || ''}
         onClose={() => setIsDetailOpen(false)}
+        onEdit={() => {}}
+        onDelete={() => {}}
+        onToggleLike={() => {}}
       />
       <CreateRecipeModal
         isOpen={isCreateOpen}
